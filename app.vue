@@ -26,7 +26,7 @@ interface Record {
 }
 
 const API_ENDPOINT =
-  "https://raw.githubusercontent.com/MrSunshyne/mauritius-dataset-electricity/main/data/power-outages.json"
+  "https://raw.githubusercontent.com/MrSunshyne/mauritius-dataset-electricity/main/data/power-outages.latest.json"
 
 async function fetchJson(url = API_ENDPOINT) {
   try {
@@ -38,19 +38,10 @@ async function fetchJson(url = API_ENDPOINT) {
 }
 
 const data = await fetchJson(API_ENDPOINT)
-const flat = Object.values(data).flat()
-const todayData = filterByToday(flat as Record[])
 
-console.log(todayData)
+const { today, future } = data
 
-function filterByToday(dataset: Record[]) {
-  const x = startOfDay(new Date()).getTime()
-
-  return dataset.filter((record) => {
-    const startOfThatDay = startOfDay(new Date(record.from)).getTime()
-    return x === startOfThatDay
-  })
-}
+console.log(today)
 
 function getState(item: Record) {
   let on = "upcoming"
@@ -94,7 +85,7 @@ function getState(item: Record) {
   </h1>
   <div class="grid gap-y-12 max-w-screen-md mx-auto my-12">
     <div
-      v-for="(outage, index) in todayData"
+      v-for="(outage, index) in today"
       :key="index"
       class="flex flex-col justify-between bg-blue-950 text-white p-4 rounded-md w-full"
     >
